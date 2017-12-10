@@ -13,6 +13,13 @@ public class Pac {
 	
 	private int xLoc;
 	private int yLoc;
+	
+	/**
+	 * "Subcoordinate" that is within each "block". Within each block, there can be 3 different locations
+	 */
+	private double xSub;
+	private double ySub;
+	
 	private PacPanel panel;
 		
 	private String orientation;
@@ -24,8 +31,11 @@ public class Pac {
 		moveState = 0;
 		
 		panel = setPanel;
-		xLoc = (int)setX;
-		yLoc = (int)setY;
+		
+		xLoc = setX;
+		yLoc = setY;
+		xSub = 0;
+		ySub = 0;
 	}
 	
 	public int getX() {
@@ -47,7 +57,8 @@ public class Pac {
 	private boolean tryTurn() {
 		int[] transl = getTransform(futureOrientation);
 		
-		if (panel.getBoard()[yLoc + transl[1]][xLoc + transl[0]] != 1) {
+		if (panel.getBoard()[yLoc + transl[1]][xLoc + transl[0]] != 1 
+				&& xSub == 0 && ySub == 0) {
 			orientation = futureOrientation;
 			return true;
 		}
@@ -58,38 +69,54 @@ public class Pac {
 	
 	
 	public void update() {
-		
-		//Find next coordinates
-		int[] transl = getTransform(orientation);
-		int[] nextCoord = {xLoc + transl[0], yLoc + transl[1]};
+
 		tryTurn();
-
 		
-		switch (moveState) {
-			case 0:
-				
-				//Checks if there's no wall ahead
-				boolean noWall = panel.getBoard()[ nextCoord[1] ][ nextCoord[0] ] != 1;
-				
-				if (noWall) {
-					moveState = 1;
-				}
-				break;
-				
-			case 1:
-				moveState++;
-				break;
-				
-			case 2:
-				moveState++;
-				break;
-				
-			case 3:
-				xLoc = nextCoord[0];
-				yLoc = nextCoord[1];
-				moveState = 0;
-
+		move();
+	}
+	
+	public void move() {
+		int[] delta = getTransform(orientation);
+		
+		boolean noWallAhead = panel.getBoard()[ (int)(yLoc + delta[1]) ][ (int)(xLoc + delta[0]) ] != 1;
+		
+		System.out.println(xLoc + xSub + " " + (yLoc + ySub) );
+		
+		if (xLoc + xSub + delta[0] * .333 > 19.5) {
+			xLoc = 0;
+			xSub = 0.667;
+		} else if (xLoc + xSub + delta[0] * .333 < 0.5) {
+			xLoc = 19;
+			xSub = .333;
 		}
+		
+		if ( (xSub + delta[0] * .333 == 0 && ySub + delta[1] * .333 == 0) || noWallAhead) {
+			xSub += delta[0] * .333;
+			ySub += delta[1] * .333;
+		}
+		
+		if (ySub == 0 && noWallAhead) {
+			
+			if (xSub > .5) {
+				xLoc += 1;
+				xSub = -.333;
+			} else if (xSub < -.5) {
+				xLoc -= 1;
+				xSub = .333;
+			}
+		}
+		
+		if (xSub == 0 && noWallAhead) {
+			
+			if (ySub > .5) {
+				yLoc += 1;
+				ySub = -.333;
+			} else if (ySub < -.5) {
+				yLoc -= 1;
+				ySub = .333;
+			}
+		}
+		
 	}
 	
 	private int[] getTransform(String direction) {
@@ -124,8 +151,8 @@ public class Pac {
 		int[] transl = getTransform(orientation);
 		
 		
-		g.fillOval( (int)( (xLoc) * size + transl[0] * moveState * (size/4.0)), 
-				(int)( (yLoc) * size + transl[1] * moveState * (size/4.0)), size, size);
+		g.fillOval( (int)( size * (xLoc + xSub)), 
+				(int)( size * (yLoc + ySub)), size, size);
 
 	}
 }

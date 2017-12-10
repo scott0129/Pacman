@@ -27,7 +27,6 @@ public class GameFrame {
 		
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setBackground(Color.BLACK);
 		
 		//Set the game screen to a perfect rectangle
 		panel = new PacPanel(scale, this, (int)(scale * gameWidth) );

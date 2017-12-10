@@ -97,6 +97,7 @@ public class PacPanel extends JPanel implements ActionListener, KeyListener {
 		//Sets the dimensions of this panel proportional to the dimensions of the board array
 		this.setSize( new Dimension( (int)(boardPixSize), (int) (boardPixSize * (double)boardHeight) / boardWidth) );
 		this.setPreferredSize(this.getSize());
+		this.setBackground(Color.BLACK);
 		
 		
 		blockDim = (int)((double)this.getWidth()/boardWidth);
@@ -141,7 +142,7 @@ public class PacPanel extends JPanel implements ActionListener, KeyListener {
 				switch (board[y][x]) {
 					case 1:
 						//Blue
-						g.setColor(Color.decode("#0000AA"));
+						g.setColor(Color.decode("#0000FF"));
 						
 						g.fillRect( (int)(blockDim * x), (int)(blockDim * y),
 								(int)(blockDim), (int)(blockDim) );
