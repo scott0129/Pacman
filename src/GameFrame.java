@@ -1,8 +1,10 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class GameFrame {
 	
@@ -17,7 +19,7 @@ public class GameFrame {
 	private double scale;
 	private JFrame frame;
 	private PacPanel panel;
-	
+		
 	public GameFrame(double sizePctScreen) {
 		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -33,8 +35,37 @@ public class GameFrame {
 		
 		frame.add(panel);
 		frame.addKeyListener(panel);
+		
 		frame.pack();	
 		
+
+		
+	}
+	
+	public void win() {
+		JLabel winLabel = new JLabel("You Win!");
+		winLabel.setFont(new Font("Consolas", Font.PLAIN, (int)(100 * scale)));
+		winLabel.setVerticalAlignment((int) JFrame.CENTER_ALIGNMENT);
+		winLabel.setHorizontalAlignment((int) JFrame.CENTER_ALIGNMENT);
+		frame.add(winLabel);
+		
+		panel.setVisible(false);
+		winLabel.setVisible(true);
+		frame.repaint();
+		winLabel.repaint();
+	}
+	
+	public void lose() {
+		JLabel loseLabel = new JLabel("You Lost!");
+		loseLabel.setFont(new Font("Consolas", Font.PLAIN, (int)(100 * scale)));
+		loseLabel.setVerticalAlignment((int) JFrame.CENTER_ALIGNMENT);
+		loseLabel.setHorizontalAlignment((int) JFrame.CENTER_ALIGNMENT);
+		frame.add(loseLabel);
+		
+		panel.setVisible(false);
+		loseLabel.setVisible(true);
+		frame.repaint();
+		loseLabel.repaint();
 	}
 	
 	public void run() {

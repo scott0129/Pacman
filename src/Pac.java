@@ -25,9 +25,10 @@ public class Pac {
 	private String orientation;
 	private String futureOrientation;
 	
+	
 	private int moveState;
 	
-	public Pac(int setX, int setY, PacPanel setPanel) {
+	public Pac(PacPanel setPanel, int setX, int setY) {
 		moveState = 0;
 		
 		panel = setPanel;
@@ -36,6 +37,10 @@ public class Pac {
 		yLoc = setY;
 		xSub = 0;
 		ySub = 0;
+	}
+	
+	public String getOrient() {
+		return orientation;
 	}
 	
 	public int getX() {
@@ -80,8 +85,7 @@ public class Pac {
 		
 		boolean noWallAhead = panel.getBoard()[ (int)(yLoc + delta[1]) ][ (int)(xLoc + delta[0]) ] != 1;
 		
-		System.out.println(xLoc + xSub + " " + (yLoc + ySub) );
-		
+		//Takes care of the "loop around" in the tunnels to the left and right
 		if (xLoc + xSub + delta[0] * .333 > 19.5) {
 			xLoc = 0;
 			xSub = 0.667;
@@ -90,11 +94,13 @@ public class Pac {
 			xSub = .333;
 		}
 		
-		if ( (xSub + delta[0] * .333 == 0 && ySub + delta[1] * .333 == 0) || noWallAhead) {
+		//if there's no wall ahead, move forward. If there is a wall ahead, as long as you're moving towards the "center" of a block, keep going
+		if ( noWallAhead || (xSub + delta[0] * .333 == 0 && ySub + delta[1] * .333 == 0)) {
 			xSub += delta[0] * .333;
 			ySub += delta[1] * .333;
 		}
 		
+		// only move forward in the x direction of the y direction is both zeroed and there's no wall
 		if (ySub == 0 && noWallAhead) {
 			
 			if (xSub > .5) {
@@ -106,6 +112,7 @@ public class Pac {
 			}
 		}
 		
+		// only move forward in the y direction of the x direction is both zeroed and there's no wall
 		if (xSub == 0 && noWallAhead) {
 			
 			if (ySub > .5) {
@@ -116,7 +123,7 @@ public class Pac {
 				ySub = .333;
 			}
 		}
-		
+				
 	}
 	
 	private int[] getTransform(String direction) {
@@ -146,10 +153,7 @@ public class Pac {
 	public void paint(Graphics g) {
 		
 		g.setColor(Color.GREEN);
-		int size = panel.getBlockDim();
-		
-		int[] transl = getTransform(orientation);
-		
+		int size = panel.getBlockDim();		
 		
 		g.fillOval( (int)( size * (xLoc + xSub)), 
 				(int)( size * (yLoc + ySub)), size, size);

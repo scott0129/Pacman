@@ -26,26 +26,33 @@ public class PacPanel extends JPanel implements ActionListener, KeyListener {
 	/**
 	 * height of board array
 	 */
-	int boardHeight;
+	private int boardHeight;
 	
 	/**
 	 * length of board array
 	 */
-	int boardWidth;
+	private int boardWidth;
 	
 	/**
 	 * The pixel length of each "block"
 	 */
-	int blockDim;
+	private int blockDim;
 	
 	/**
 	 * the pacman himself
 	 */
-	Pac pac;
+	private Pac pac;
 	
-	int[][] board;
+	private Ghost[] ghosts;
 	
-	Timer timer;
+	private Ghost redGhost;
+	private Ghost pinkGhost;
+	
+	private int[][] board;
+	
+	private Timer timer;
+	
+	private int prevBlobCount;
 	
 	
 	
@@ -86,7 +93,13 @@ public class PacPanel extends JPanel implements ActionListener, KeyListener {
 		
 		board = setBoard;
 		
-		pac = new Pac(11, 8, this);
+		prevBlobCount = 4;
+		
+		pac = new Pac(this, 11, 8);
+		redGhost = new Ghost(this, pac, Color.RED, 10, 9, 50, 0);
+		pinkGhost = new Ghost(this, pac, Color.PINK, 10, 9, 100, 1);
+		
+		ghosts = new Ghost[] {redGhost, pinkGhost};
 		
 		scale = setScale;
 		frame = setFrame;
@@ -98,7 +111,6 @@ public class PacPanel extends JPanel implements ActionListener, KeyListener {
 		this.setSize( new Dimension( (int)(boardPixSize), (int) (boardPixSize * (double)boardHeight) / boardWidth) );
 		this.setPreferredSize(this.getSize());
 		this.setBackground(Color.BLACK);
-		
 		
 		blockDim = (int)((double)this.getWidth()/boardWidth);
 				
@@ -124,14 +136,88 @@ public class PacPanel extends JPanel implements ActionListener, KeyListener {
 	
 	public void actionPerformed(ActionEvent e) {
 		pac.update();
+		
+		for (Ghost ghost : ghosts) {
+			ghost.update();
+		}
+		
+		//"eating" the dots
 		board[pac.getY()][pac.getX()] = 0;
+		
+		checkForPanic();
+		
+		checkForWin();
+		checkForLose();
+		
 		repaint();
+	}
+	
+	public void checkForWin() {
+		
+		if (ghosts[0].getPanic()) {
+			return;
+		}
+		
+		for (int[] row : board) {
+			for (int block : row) {
+				if (block == 2) {
+					//if there's 1 pellet on the screen, didn't win yet.
+					return;
+				}
+			}
+		}
+		
+		//if it got here, there's no pellets on the screen.
+		timer.stop();
+		frame.win();
+	}
+	
+	public void checkForLose() {
+		
+		for (Ghost ghost : ghosts) {
+			if (ghost.getX() == pac.getX() && ghost.getY() == pac.getY() ) {
+				//if it got here, ghost and pacman are overlapping.
+				timer.stop();
+				frame.lose();
+			}
+		}
+		
+		
+
+	}
+	
+	private void panic() {
+		for (Ghost ghost : ghosts) {
+			ghost.panic();
+		}
+	}
+	
+	public void checkForPanic() {
+		//counting number of "panic-inducing" blobs on the board.
+		int blobCount = 0;
+		for (int[] row : board) {
+			for (int block : row) {
+				if (block == 3) {
+					blobCount++;
+				}
+			}
+		}
+		
+		if (prevBlobCount > blobCount) { 
+			prevBlobCount = blobCount;
+			panic();
+		}
 	}
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		drawCurrentBoard(g);
 		pac.paint(g);
+		
+		for (Ghost ghost : ghosts) {
+			ghost.paint(g);
+		}
+		
 	}	
 	
 	private void drawCurrentBoard(Graphics g) {
