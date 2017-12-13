@@ -1,5 +1,10 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 
 public class Ghost {
@@ -9,7 +14,7 @@ public class Ghost {
 	private static final int[] DOWN_DELTA = new int[] {0, 1};
 	private static final int[] LEFT_DELTA = new int[] {-1, 0};
 
-	private static final int PANIC_DURATION = 150;
+	private static final int PANIC_DURATION = 100;
 	
 	public boolean panic;
 	public int panicDelay;
@@ -31,7 +36,16 @@ public class Ghost {
 	
 	private int chaseAlg;
 	
+	private BufferedImage img;
+	
 	public Ghost(PacPanel setPanel, Pac setPacman, Color setColor, int startX, int startY, int setDelay, int setChaseAlg) {
+		
+		try {
+			img = ImageIO.read(new File(".\\SUBEX_LOGO.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		panic = false;
 		panicDelay = 0;
 		chaseAlg = setChaseAlg;
@@ -61,6 +75,23 @@ public class Ghost {
 	public int getY() {
 		return yLoc;
 	}
+	
+	/**
+	 * returns "literal" distance, which is the grid# plus subarray.
+	 * @return xLoc + xSub.
+	 */
+	public double getLitX() {
+		return xLoc + xSub;
+	}
+	
+	/**
+	 * returns "literal" distance, which is the grid# plus subarray
+	 * @return yLoc + ySub.
+	 */
+	public double getLitY() {
+		return yLoc + ySub;
+	}
+	
 	
 	public void panic() {
 		if (!panic) {
@@ -373,9 +404,14 @@ public class Ghost {
 		
 		int size = panel.getBlockDim();
 		
-		g.fillPolygon(new int[] { (int)(size * (xLoc + xSub) + size/2.0),	(int)(size * (xLoc + xSub)),	 (int)(size * (xLoc + xSub + 1)) } ,
-					  new int[] { (int)(size * (yLoc + ySub)),	(int)(size * (yLoc + ySub + 1) ), (int)(size * (yLoc + ySub + 1) ) } ,	3);
-		
+		if (img == null) {
+			g.fillPolygon(new int[] { (int)(size * (xLoc + xSub) + size/2.0),	(int)(size * (xLoc + xSub)),	 (int)(size * (xLoc + xSub + 1)) } ,
+						  new int[] { (int)(size * (yLoc + ySub)),	(int)(size * (yLoc + ySub + 1) ), (int)(size * (yLoc + ySub + 1) ) } ,	3);
+		} else {
+			g.fillOval( (int)( size * (xLoc + xSub)), 
+					(int)( size * (yLoc + ySub)), size, size);
+			g.drawImage(img, (int)( size * (xLoc + xSub)), (int)( size * (yLoc + ySub + .1)), size, size, null);
+		}
 	}
 	
 }

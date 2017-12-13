@@ -2,8 +2,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -25,11 +29,17 @@ public class Pac {
 	private String orientation;
 	private String futureOrientation;
 	
+	private BufferedImage img;
 	
-	private int moveState;
 	
 	public Pac(PacPanel setPanel, int setX, int setY) {
-		moveState = 0;
+		
+
+		try {
+			img = ImageIO.read(new File(".\\UI_LOGO.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		panel = setPanel;
 		
@@ -51,10 +61,27 @@ public class Pac {
 		return yLoc;
 	}
 	
+	/**
+	 * returns "literal" distance, which is the grid# plus subarray.
+	 * @return xLoc + xSub.
+	 */
+	public double getLitX() {
+		return xLoc + xSub;
+	}
+	
+	/**
+	 * returns "literal" distance, which is the grid# plus subarray
+	 * @return yLoc + ySub.
+	 */
+	public double getLitY() {
+		return yLoc + ySub;
+	}
+	
+	
 	public void setOrientation(String setOrient) {
 		futureOrientation = setOrient;
 		
-		if (!futureOrientation.equals(orientation) && moveState == 0) {
+		if ( !futureOrientation.equals(orientation) ) {
 			tryTurn();
 		}
 	}
@@ -152,11 +179,18 @@ public class Pac {
 	
 	public void paint(Graphics g) {
 		
-		g.setColor(Color.GREEN);
-		int size = panel.getBlockDim();		
+		int size = panel.getBlockDim();	
 		
-		g.fillOval( (int)( size * (xLoc + xSub)), 
-				(int)( size * (yLoc + ySub)), size, size);
+		if (img == null) {
+			
+			g.setColor(Color.GREEN);
+			
+			g.fillOval( (int)( size * (xLoc + xSub)), 
+					(int)( size * (yLoc + ySub)), size, size);
+			
+		} else {
+			g.drawImage(img, (int)( size * (xLoc + xSub)), (int)( size * (yLoc + ySub + .1)), size, size, null);
+		}
 
 	}
 }

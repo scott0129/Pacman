@@ -29,6 +29,7 @@ public class GameFrame {
 		
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setTitle("UI vs SubEx");
 		
 		//Set the game screen to a perfect rectangle
 		panel = new PacPanel(scale, this, (int)(scale * gameWidth) );
@@ -43,7 +44,7 @@ public class GameFrame {
 	}
 	
 	public void win() {
-		JLabel winLabel = new JLabel("You Win!");
+		JLabel winLabel = new JLabel("You win the lawsuit!");
 		winLabel.setFont(new Font("Consolas", Font.PLAIN, (int)(100 * scale)));
 		winLabel.setVerticalAlignment((int) JFrame.CENTER_ALIGNMENT);
 		winLabel.setHorizontalAlignment((int) JFrame.CENTER_ALIGNMENT);
@@ -56,7 +57,7 @@ public class GameFrame {
 	}
 	
 	public void lose() {
-		JLabel loseLabel = new JLabel("You Lost!");
+		JLabel loseLabel = new JLabel("You were sued!");
 		loseLabel.setFont(new Font("Consolas", Font.PLAIN, (int)(100 * scale)));
 		loseLabel.setVerticalAlignment((int) JFrame.CENTER_ALIGNMENT);
 		loseLabel.setHorizontalAlignment((int) JFrame.CENTER_ALIGNMENT);

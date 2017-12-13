@@ -8,7 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -54,7 +58,9 @@ public class PacPanel extends JPanel implements ActionListener, KeyListener {
 	
 	private int prevBlobCount;
 	
-	
+	private BufferedImage kernel;
+	private BufferedImage corn;
+	private BufferedImage busStop;
 	
 	public PacPanel(double setScale, GameFrame setFrame, int boardPixSize) {
 		/*
@@ -93,10 +99,19 @@ public class PacPanel extends JPanel implements ActionListener, KeyListener {
 		
 		board = setBoard;
 		
+		try {
+			
+			kernel = ImageIO.read(new File(".\\CORN_KERNEL.PNG"));
+			corn = ImageIO.read(new File(".\\CORN.PNG"));
+			busStop = ImageIO.read(new File(".\\BUS_STOP.jpg"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		prevBlobCount = 4;
 		
 		pac = new Pac(this, 11, 8);
-		redGhost = new Ghost(this, pac, Color.RED, 10, 9, 50, 0);
+		redGhost = new Ghost(this, pac, Color.RED, 10, 9, 51, 0);
 		pinkGhost = new Ghost(this, pac, Color.PINK, 10, 9, 100, 1);
 		
 		ghosts = new Ghost[] {redGhost, pinkGhost};
@@ -154,10 +169,6 @@ public class PacPanel extends JPanel implements ActionListener, KeyListener {
 	
 	public void checkForWin() {
 		
-		if (ghosts[0].getPanic()) {
-			return;
-		}
-		
 		for (int[] row : board) {
 			for (int block : row) {
 				if (block == 2) {
@@ -174,8 +185,12 @@ public class PacPanel extends JPanel implements ActionListener, KeyListener {
 	
 	public void checkForLose() {
 		
+		if (ghosts[0].getPanic()) {
+			return;
+		}
+		
 		for (Ghost ghost : ghosts) {
-			if (ghost.getX() == pac.getX() && ghost.getY() == pac.getY() ) {
+			if (Math.abs( ghost.getLitX() - pac.getLitX() ) < .5 && Math.abs( ghost.getLitY() - pac.getLitY() ) < .5 ) {
 				//if it got here, ghost and pacman are overlapping.
 				timer.stop();
 				frame.lose();
@@ -227,7 +242,7 @@ public class PacPanel extends JPanel implements ActionListener, KeyListener {
 			for (int x = 0; x < boardWidth; x++) {
 				switch (board[y][x]) {
 					case 1:
-						//Blue
+					//Blue
 						g.setColor(Color.decode("#0000FF"));
 						
 						g.fillRect( (int)(blockDim * x), (int)(blockDim * y),
@@ -235,22 +250,26 @@ public class PacPanel extends JPanel implements ActionListener, KeyListener {
 						this.repaint();
 						break;
 					
+					//draw little dots
 					case 2:
 						g.setColor(Color.YELLOW);
 						
-						g.fillOval( (blockDim * x) + (int)(blockDim/3.0), (blockDim * y) + (int)(blockDim/3.0), (int)(blockDim/3.0), (int)(blockDim/3.0));
+						g.drawImage(kernel, (blockDim * x), (blockDim * y), (int)(blockDim), (int)(blockDim), null);
 						this.repaint();
 						break;
 						
+					//draw Big dots
 					case 3:
 						g.setColor(Color.ORANGE);
 						
-						g.fillOval( (blockDim * x) + (int)(blockDim/8.0), (blockDim * y) + (int)(blockDim/8.0), (int)(3 * blockDim/4.0), (int)(3 * blockDim/4.0));
+						g.drawImage(corn, (blockDim * x), (blockDim * y), (int)(blockDim), (int)(blockDim), null);
 						this.repaint();
 						break;
 				}
 			}
 		}
+		
+		g.drawImage(busStop, (int)(blockDim * 8.5) , blockDim*10, blockDim*4, blockDim*1, null);
 	}
 
 	@Override
