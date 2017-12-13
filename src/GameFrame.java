@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -12,9 +11,6 @@ public class GameFrame {
 	 * Relative "width" of the game screen.
 	 */
 	private int gameWidth = 1500;
-	
-	private int spawnX = 10;
-	private int spawnY = 8;
 	
 	private double scale;
 	private JFrame frame;

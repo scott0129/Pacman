@@ -1,9 +1,6 @@
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -18,12 +15,12 @@ import javax.swing.Timer;
 
 public class PacPanel extends JPanel implements ActionListener, KeyListener {
 
-	public static final int TIMER_DELAY = 50;
-	
 	/**
-	 * scale which allows it to run on different monitors with different resolutions
+	 * 
 	 */
-	private double scale;
+	private static final long serialVersionUID = 1L;
+
+	public static final int TIMER_DELAY = 50;
 	
 	private GameFrame frame;
 	
@@ -116,7 +113,6 @@ public class PacPanel extends JPanel implements ActionListener, KeyListener {
 		
 		ghosts = new Ghost[] {redGhost, pinkGhost};
 		
-		scale = setScale;
 		frame = setFrame;
 		
 		boardHeight = board.length;

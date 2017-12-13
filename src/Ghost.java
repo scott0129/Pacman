@@ -24,7 +24,6 @@ public class Ghost {
 	private Pac pacman;
 	
 	private String orientation;
-	private String futureOrientation;
 	
 	private int xLoc;
 	private int yLoc;
